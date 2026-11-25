@@ -1,0 +1,20 @@
+[Unit]
+Description=WorkBuddy clipboard bridge (UTF-8 text + image)
+Documentation=https://github.com/USER/workbuddy-remote
+After=wbdesktop.service
+Wants=wbdesktop.service
+
+[Service]
+Type=simple
+User=__USER__
+Group=__USER__
+Environment=HOME=__HOME__
+Environment=CLIP_DISPLAY=:98
+Environment=CLIP_PORT=8137
+Environment=CLIP_UPLOAD_DIR=__APPDIR__/uploads
+ExecStart=/usr/bin/python3 __APPDIR__/clipbridge.py
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

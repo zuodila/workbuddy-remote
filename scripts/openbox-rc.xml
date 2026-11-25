@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  放到 ~/.config/openbox/rc.xml（没有就新建）。
+  作用：所有新窗口默认最大化，避免应用缩在左上角、四周露出黑色根窗口。
+  改完执行：DISPLAY=:98 openbox --reconfigure
+-->
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+  <applications>
+    <application class="*">
+      <maximized>yes</maximized>
+    </application>
+  </applications>
+</openbox_config>
