@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" width="1200" height="780" role="img" aria-label="WorkBuddy Remote 架构图">
+  <defs>
+    <style>
+      .t   { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+      .h   { font-size: 22px; font-weight: 700; fill: #10231c; }
+      .lbl { font-size: 14px; fill: #5b6b64; }
+      .box-t { font-size: 17px; font-weight: 600; fill: #10231c; }
+      .box-s { font-size: 13px; fill: #5b6b64; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; fill: #0b7150; }
+      .lane { font-size: 13px; fill: #7d8b85; letter-spacing: 2px; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#159a6c"/>
+    </marker>
+    <linearGradient id="g-green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2fbf6"/><stop offset="1" stop-color="#e6f7ef"/>
+    </linearGradient>
+    <linearGradient id="g-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4f8ff"/><stop offset="1" stop-color="#e9f1fe"/>
+    </linearGradient>
+    <linearGradient id="g-amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffdf5"/><stop offset="1" stop-color="#fdf6e3"/>
+    </linearGradient>
+    <linearGradient id="g-gray" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fafbfc"/><stop offset="1" stop-color="#f1f3f5"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="780" fill="#ffffff"/>
+
+  <text class="t h" x="48" y="56">WorkBuddy Remote 架构</text>
+  <text class="t lbl" x="48" y="82">一份会话跑在 NAS 上，设备只是入口；除网关外全部只监听回环地址。</text>
+
+  <!-- 分层标签 -->
+  <text class="t lane" x="48" y="140">接入层</text>
+  <text class="t lane" x="48" y="266">网关层</text>
+  <text class="t lane" x="48" y="392">服务层</text>
+  <text class="t lane" x="48" y="560">桌面层</text>
+  <text class="t lane" x="48" y="716">宿主层</text>
+
+  <!-- 接入层 -->
+  <g>
+    <rect x="150" y="112" width="380" height="104" rx="16" fill="url(#g-blue)" stroke="#c9dbfb"/>
+    <text class="t box-t" x="176" y="148">浏览器</text>
+    <text class="t box-s" x="176" y="174">任意设备打开网址即可，无需安装</text>
+    <text class="t box-s" x="176" y="196">noVNC 页面 + wbclip.js</text>
+
+    <rect x="560" y="112" width="380" height="104" rx="16" fill="url(#g-blue)" stroke="#c9dbfb"/>
+    <text class="t box-t" x="586" y="148">桌面客户端（可选）</text>
+    <text class="t box-s" x="586" y="174">Windows / macOS · 无地址栏 · 预置认证</text>
+    <text class="t box-s" x="586" y="196">托盘常驻 · 断线重连 · 关闭收进托盘</text>
+  </g>
+
+  <!-- 网关层 -->
+  <g>
+    <rect x="150" y="238" width="790" height="104" rx="16" fill="url(#g-green)" stroke="#bfe6d5"/>
+    <text class="t box-t" x="176" y="274">Nginx 网关</text>
+    <text class="t box-s" x="176" y="300">TLS 终止 · Basic Auth · WebSocket 升级 · proxy_buffering off</text>
+    <text class="t box-s" x="176" y="322">唯一对外暴露的端口；VNC / 剪贴板接口都不直接上网</text>
+    <text class="t mono" x="700" y="300">/ → 127.0.0.1:6080</text>
+    <text class="t mono" x="700" y="322">/clip/ → 127.0.0.1:8137</text>
+  </g>
+
+  <!-- 服务层 -->
+  <g>
+    <rect x="150" y="364" width="380" height="150" rx="16" fill="url(#g-gray)" stroke="#dde1e5"/>
+    <text class="t box-t" x="176" y="400">websockify + noVNC</text>
+    <text class="t box-s" x="176" y="426">RFB ⇄ WebSocket 转换</text>
+    <text class="t box-s" x="176" y="448">托管静态页面</text>
+    <text class="t mono" x="176" y="478">:6080 → :5900</text>
+
+    <rect x="560" y="364" width="380" height="150" rx="16" fill="url(#g-amber)" stroke="#f0e0b8"/>
+    <text class="t box-t" x="586" y="400">clipbridge</text>
+    <text class="t box-s" x="586" y="426">UTF-8 文本 + 图片剪贴板</text>
+    <text class="t box-s" x="586" y="448">窗口尺寸 → xrandr（消灭黑边）</text>
+    <text class="t mono" x="586" y="478">:8137 · /clip/get | set | image | resize</text>
+  </g>
+
+  <!-- 桌面层 -->
+  <g>
+    <rect x="150" y="532" width="790" height="150" rx="16" fill="url(#g-gray)" stroke="#dde1e5"/>
+    <text class="t box-t" x="176" y="568">Xvfb :98（虚拟屏 2560×1600）</text>
+    <text class="t box-s" x="176" y="594">openbox（全窗口最大化） · tint2（任务栏） · fcitx5（中文输入）</text>
+
+    <rect x="176" y="612" width="330" height="48" rx="10" fill="#ffffff" stroke="#cfd6db"/>
+    <text class="t box-s" x="196" y="642">x11vnc :5900（仅回环）</text>
+
+    <rect x="528" y="612" width="388" height="48" rx="10" fill="#ffffff" stroke="#cfd6db"/>
+    <text class="t box-s" x="548" y="642">WorkBuddy 桌面应用（无头运行）</text>
+  </g>
+
+  <!-- 宿主层 -->
+  <g>
+    <rect x="150" y="700" width="790" height="48" rx="12" fill="#f7f8f9" stroke="#e3e6e8"/>
+    <text class="t box-s" x="176" y="730">systemd：wbdesktop.service（会话） + wbclip.service（剪贴板桥） · 开机自启 · 崩溃拉起</text>
+  </g>
+
+  <!-- 连线 -->
+  <g stroke="#159a6c" stroke-width="2.5" fill="none">
+    <path d="M340 216 L340 238" marker-end="url(#arrow)"/>
+    <path d="M750 216 L750 238" marker-end="url(#arrow)"/>
+    <path d="M340 342 L340 364" marker-end="url(#arrow)"/>
+    <path d="M750 342 L750 364" marker-end="url(#arrow)"/>
+  </g>
+  <text class="t box-s" x="352" y="236" fill="#7d8b85">HTTPS / WSS</text>
+
+  <!-- 侧注 -->
+  <g>
+    <rect x="980" y="364" width="176" height="318" rx="14" fill="#fbfcfd" stroke="#e5e9ec"/>
+    <text class="t box-t" x="1000" y="400" style="font-size:15px">设计要点</text>
+    <text class="t box-s" x="1000" y="430">· 剪贴板绕开 RFB</text>
+    <text class="t box-s" x="1000" y="456">· 分辨率跟随窗口</text>
+    <text class="t box-s" x="1000" y="482">· 单端口暴露</text>
+    <text class="t box-s" x="1000" y="508">· 全 systemd 托管</text>
+    <text class="t box-s" x="1000" y="534">· 无 GPU / 无 VM</text>
+    <text class="t box-s" x="1000" y="574" style="font-size:12px;fill:#8a9a93">资源占用参考</text>
+    <text class="t box-s" x="1000" y="598" style="font-size:12px">X 会话 60–120 MB</text>
+    <text class="t box-s" x="1000" y="620" style="font-size:12px">应用 250–450 MB</text>
+    <text class="t box-s" x="1000" y="642" style="font-size:12px">桥 + VNC 50–80 MB</text>
+    <text class="t box-s" x="1000" y="668" style="font-size:12px;fill:#0b7150">合计约 400–650 MB</text>
+  </g>
+</svg>

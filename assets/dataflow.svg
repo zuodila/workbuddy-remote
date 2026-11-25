@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="两条数据通道">
+  <defs>
+    <style>
+      .t { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+      .h { font-size: 22px; font-weight: 700; fill: #10231c; }
+      .sub { font-size: 13px; fill: #5b6b64; }
+      .box-t { font-size: 16px; font-weight: 600; fill: #10231c; }
+      .box-s { font-size: 12.5px; fill: #5b6b64; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+      .tag { font-size: 12px; font-weight: 600; }
+    </style>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#2f6fd0"/>
+    </marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#159a6c"/>
+    </marker>
+    <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="620" fill="#ffffff"/>
+  <text class="t h" x="48" y="54">两条通道：画面/输入走 RFB，剪贴板另走 HTTP</text>
+  <text class="t sub" x="48" y="80">RFB 的剪贴板消息只支持 ISO-8859-1，中文与图片必然损坏，所以必须单独开一条全 UTF-8 的通道。</text>
+
+  <!-- 本机 -->
+  <rect x="48" y="120" width="210" height="420" rx="16" fill="#f4f8ff" stroke="#c9dbfb"/>
+  <text class="t box-t" x="72" y="160">本机</text>
+  <text class="t box-s" x="72" y="188">浏览器 / 客户端</text>
+  <text class="t box-s" x="72" y="216">· canvas 绘制画面</text>
+  <text class="t box-s" x="72" y="240">· 键鼠事件</text>
+  <text class="t box-s" x="72" y="264">· 系统剪贴板</text>
+
+  <!-- 远端 -->
+  <rect x="942" y="120" width="210" height="420" rx="16" fill="#f2fbf6" stroke="#bfe6d5"/>
+  <text class="t box-t" x="966" y="160">NAS（远端）</text>
+  <text class="t box-s" x="966" y="188">Xvfb :98</text>
+  <text class="t box-s" x="966" y="216">· 应用窗口</text>
+  <text class="t box-s" x="966" y="240">· X CLIPBOARD</text>
+  <text class="t box-s" x="966" y="264">· 输入焦点</text>
+
+  <!-- 通道1：画面与输入 -->
+  <rect x="300" y="120" width="600" height="120" rx="14" fill="#fbfcfe" stroke="#d9e2f2"/>
+  <text class="t tag" x="320" y="150" fill="#2f6fd0">通道 1 · 画面与输入</text>
+  <text class="t box-s" x="320" y="180">WebSocket（wss）→ websockify → x11vnc → RFB</text>
+  <text class="t box-s" x="320" y="204">帧编码、键鼠注入，分辨率由 xrandr 与页面尺寸对齐</text>
+  <path d="M252 180 L298 180" stroke="#2f6fd0" stroke-width="2.5" fill="none" marker-end="url(#a1)"/>
+  <path d="M902 200 L946 200" stroke="#2f6fd0" stroke-width="2.5" fill="none" marker-end="url(#a1)"/>
+  <path d="M946 230 L902 230" stroke="#2f6fd0" stroke-width="2.5" fill="none" marker-end="url(#a1)"/>
+  <path d="M298 230 L252 230" stroke="#2f6fd0" stroke-width="2.5" fill="none" marker-end="url(#a1)"/>
+
+  <!-- 通道2：剪贴板 -->
+  <rect x="300" y="270" width="600" height="150" rx="14" fill="#f7fdfa" stroke="#c6e8d8"/>
+  <text class="t tag" x="320" y="302" fill="#0b7150">通道 2 · 剪贴板（本项目自建）</text>
+  <text class="t box-s" x="320" y="332">同源 HTTP：GET /clip/get · POST /clip/set · POST /clip/image</text>
+  <text class="t box-s" x="320" y="356">文本走 UTF-8，图片走二进制，页面每 1s 轮询一次</text>
+  <text class="t box-s" x="320" y="380">按内容签名去重，避免"本机 ↔ 远端"来回覆盖</text>
+  <path d="M252 340 L296 340" stroke="#159a6c" stroke-width="2.5" fill="none" marker-end="url(#a2)"/>
+  <path d="M904 360 L948 360" stroke="#159a6c" stroke-width="2.5" fill="none" marker-end="url(#a2)"/>
+  <path d="M948 390 L904 390" stroke="#159a6c" stroke-width="2.5" fill="none" marker-end="url(#a2)"/>
+  <path d="M296 390 L252 390" stroke="#159a6c" stroke-width="2.5" fill="none" marker-end="url(#a2)"/>
+
+  <!-- 失败对比 -->
+  <rect x="300" y="452" width="600" height="96" rx="14" fill="#fff7f6" stroke="#f3c9c4"/>
+  <text class="t tag" x="320" y="480" fill="#c0392b">如果剪贴板也走 RFB（大多数方案的做法）</text>
+  <text class="t box-s" x="320" y="506">本机 → 远端：非 ASCII 被替换成 ?　　远端 → 本机：UTF-8 字节按 Latin-1 解码，变成 å...
+  </text>
+  <text class="t box-s" x="320" y="530">图片没有对应消息类型，被降级成文件名或 MIME 字符串（就是那个坏掉的 PNG 图标）</text>
+
+  <!-- 底部说明 -->
+  <text class="t sub" x="48" y="586">结论：能改的是前端，改不了的是协议。要么换协议，要么绕开它 —— 本项目选择绕开。</text>
+</svg>
