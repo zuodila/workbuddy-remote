@@ -1,0 +1,7 @@
+# 脚本要在 Linux 上直接跑，统一 LF
+* text=auto eol=lf
+
+*.png binary
+*.ico binary
+*.zip binary
+*.dmg binary

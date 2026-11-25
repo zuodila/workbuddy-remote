@@ -1,0 +1,18 @@
+# ---- 依赖与产物 ----
+node_modules/
+client/dist/
+client/node_modules/
+*.log
+.DS_Store
+Thumbs.db
+
+# ---- 私有配置：绝不要提交（含服务器地址与口令）----
+client/default-config.json
+*.htpasswd
+config.json
+
+# ---- 本地备份与临时文件 ----
+*.bak-*
+*.tgz
+*.zip
+uploads/
