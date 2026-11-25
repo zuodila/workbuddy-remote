@@ -8,6 +8,8 @@
 
 客户端本体是一个很小的 Electron 壳，页面仍是远端那一套 `vnc.html` —— 也就是说**前端逻辑只有一份**，改页面不用重发客户端。
 
+![客户端界面](../assets/screenshots/client-windows.jpg)
+
 ---
 
 ## 结构

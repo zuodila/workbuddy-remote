@@ -60,6 +60,10 @@
 - [x] systemd 开机自启，崩溃自动拉起
 - [x] 单端口 TLS + Basic Auth，不把 VNC 直接暴露在公网
 
+![Windows 客户端](assets/screenshots/client-windows.jpg)
+
+<sub>Windows 客户端：没有地址栏和标签页，窗口就是远端桌面本身；关掉窗口会收进托盘，双击图标唤回。</sub>
+
 ---
 
 ## 整体流程
