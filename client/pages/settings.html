@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>连接设置</title>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+    background: #fff; color: #1f2329; padding: 22px 26px; box-sizing: border-box;
+  }
+  h2 { font-size: 15px; margin: 0 0 4px; font-weight: 600; }
+  .desc { font-size: 12px; color: #8a9099; margin: 0 0 16px; line-height: 1.6; }
+  label { font-size: 13px; color: #373c43; display: block; margin: 0 0 6px; }
+  input {
+    width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px;
+    border: 1px solid #d0d3d6; border-radius: 6px; font-family: inherit; color: #1f2329;
+    outline: none; margin-bottom: 12px;
+  }
+  input:focus { border-color: #1c9d6e; box-shadow: 0 0 0 3px rgba(28,157,110,.12); }
+  .row { display: flex; gap: 12px; }
+  .row > div { flex: 1; }
+  .msg { font-size: 12px; color: #e34d59; height: 16px; margin-top: 2px; }
+  .btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+  button {
+    padding: 7px 18px; font-size: 13px; border-radius: 6px; cursor: pointer;
+    font-family: inherit; border: 1px solid #d0d3d6; background: #fff; color: #1f2329;
+  }
+  button.primary { background: #1c9d6e; border-color: #1c9d6e; color: #fff; }
+  button.primary:hover { background: #178a60; }
+  button:hover { border-color: #b6bcc2; }
+  code { background: #f2f3f5; padding: 1px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+  <h2>连接设置</h2>
+  <p class="desc">
+    填写你部署的 WorkBuddy Remote 地址（形如 <code>https://example.com:8443</code>）。
+    若网关闭用了 Basic Auth，请一并填写账号口令；留空则每次由浏览器弹窗输入。
+  </p>
+
+  <label for="addr">服务器地址</label>
+  <input id="addr" type="text" spellcheck="false" placeholder="https://example.com:8443">
+
+  <div class="row">
+    <div>
+      <label for="user">用户名（可选）</label>
+      <input id="user" type="text" spellcheck="false" placeholder="demo">
+    </div>
+    <div>
+      <label for="pass">口令（可选）</label>
+      <input id="pass" type="password" spellcheck="false" placeholder="••••••••">
+    </div>
+  </div>
+
+  <div class="msg" id="msg"></div>
+  <div class="btns">
+    <button id="cancel">取消</button>
+    <button id="save" class="primary">保存并连接</button>
+  </div>
+
+<script>
+  var addr = document.getElementById('addr');
+  var user = document.getElementById('user');
+  var pass = document.getElementById('pass');
+  var msg = document.getElementById('msg');
+
+  wbapi.getConfig().then(function (cfg) {
+    addr.value = cfg.server || '';
+    user.value = cfg.user || '';
+    pass.value = cfg.pass || '';
+    addr.focus();
+  });
+
+  document.getElementById('cancel').addEventListener('click', function () { wbapi.close(); });
+
+  document.getElementById('save').addEventListener('click', function () {
+    msg.textContent = '';
+    wbapi.setConfig({ server: addr.value, user: user.value, pass: pass.value })
+      .then(function (res) {
+        if (res && res.ok) wbapi.close();
+        else msg.textContent = (res && res.message) || '保存失败';
+      });
+  });
+
+  [addr, user, pass].forEach(function (el) {
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') document.getElementById('save').click();
+      if (e.key === 'Escape') wbapi.close();
+    });
+  });
+</script>
+</body>
+</html>

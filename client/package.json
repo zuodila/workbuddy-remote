@@ -1,0 +1,98 @@
+{
+  "name": "workbuddy-remote-client",
+  "version": "1.0.0",
+  "description": "WorkBuddy Remote 桌面客户端（Electron 外壳）",
+  "main": "main.js",
+  "author": "WorkBuddy Remote contributors",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis --x64",
+    "dist:mac": "electron-builder --mac dmg --arm64"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "io.github.workbuddy-remote.client",
+    "productName": "WorkBuddy 桌面",
+    "copyright": "MIT",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "pages/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "WorkBuddy桌面-${version}-Windows安装包.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "language": "2052",
+      "installerLanguages": [
+        "zh_CN"
+      ],
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "WorkBuddy 桌面",
+      "uninstallDisplayName": "WorkBuddy 桌面",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true,
+      "license": "build/许可协议.txt"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.png",
+      "artifactName": "WorkBuddy桌面-${version}-Mac-Apple芯片.${ext}",
+      "darkModeSupport": false,
+      "identity": null,
+      "notarize": false
+    },
+    "dmg": {
+      "title": "WorkBuddy 桌面 ${version}",
+      "window": {
+        "width": 640,
+        "height": 420
+      },
+      "contents": [
+        {
+          "x": 170,
+          "y": 210,
+          "type": "file"
+        },
+        {
+          "x": 470,
+          "y": 210,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "server": "https://example.com:8443",
+  "user": "demo",
+  "pass": "change-me"
+}
